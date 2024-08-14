@@ -2,7 +2,6 @@ package com.example.library.Controllers;
 
 import com.example.library.Common.ApplicationRoles;
 import com.example.library.Common.Enums;
-import com.example.library.DTOs.Login.LoginResponseDTO;
 import com.example.library.DTOs.Patron.AllPatronsResponseDTO;
 import com.example.library.DTOs.Patron.PatronDTO;
 import com.example.library.DTOs.Patron.PatronResponseDTO;
@@ -30,38 +29,32 @@ public class PatronController {
         this.patronService = patronService;
     }
 
+    private <T> ResponseEntity<T> createResponse(T response, Enums.StatusResponse status) {
+        return status == Enums.StatusResponse.Success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).View_Patrons)")
     public ResponseEntity<PatronResponseDTO> getPatronById(@PathVariable Long id)   {
         PatronResponseDTO response = patronService.getPatronById(id);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Edit_Patrons)")
     public ResponseEntity<ResponseDTO> editPatronById(@PathVariable Long id, @RequestBody @Validated PatronDTO patronDTO)   {
         ResponseDTO response = patronService.editPatronById(id, patronDTO );
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Add_Patrons)")
-    public ResponseEntity<LoginResponseDTO> addPatron( @RequestBody @Validated RegisterDTO registerDTO)   {
-        LoginResponseDTO response = patronService.addPatron(registerDTO, PatronRoles());
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+    public ResponseEntity<ResponseDTO> addPatron( @RequestBody @Validated RegisterDTO registerDTO)   {
+        ResponseDTO response = patronService.addPatron(registerDTO, PatronRoles());
+        return createResponse(response, response.getStatusResponse());
+
     }
     private static List<RolesDTO> PatronRoles(){
         List<String> roleNames = Arrays.asList(ApplicationRoles.Borrow_Book, ApplicationRoles.Return_Book, ApplicationRoles.View_Books);
@@ -72,11 +65,8 @@ public class PatronController {
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).View_Patrons)")
     public ResponseEntity<AllPatronsResponseDTO> getPatrons()   {
         AllPatronsResponseDTO response = patronService.getAllPatrons();
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
 
@@ -84,10 +74,7 @@ public class PatronController {
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Delete_Patrons)")
     public ResponseEntity<ResponseDTO> deletePatronById(@PathVariable Long id)   {
         ResponseDTO response = patronService.deletePatronById(id);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 }

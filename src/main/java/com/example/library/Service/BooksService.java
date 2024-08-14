@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -50,16 +51,14 @@ public class BooksService {
             return new ResponseDTO(Enums.StatusResponse.Success, "Book Added Successfully");
         } catch (Exception e) {
             log.error("Failed to Add Book: {}", e.getMessage(), e);
-            return new ResponseDTO(Enums.StatusResponse.Failed, "Failed to Add Book");
+            return new ResponseDTO(Enums.StatusResponse.Failed, e.getMessage());
         }
     }
 
-    public BookResponseDTO getBookById(Long id) {
-        Book book = IBooksRepository.findById(id).orElse(null);
-        if (book != null) {
-            return BookMapper.mapToBookDTO(book, Enums.StatusResponse.Success, "Book retrieved successfully");
-        }
-        else return new BookResponseDTO(null,null,null,null,null,Enums.StatusResponse.Failed, "Book not found");
+
+    public Optional<BookResponseDTO> getBookById(Long id) {
+        return IBooksRepository.findById(id)
+                .map(book -> BookMapper.mapToBookDTO(book, Enums.StatusResponse.Success, "Book retrieved successfully"));
     }
 
     @Transactional
@@ -72,19 +71,25 @@ public class BooksService {
             }
             catch (Exception e) {
                 log.error("Failed to Edit Book: {}", e.getMessage(), e);
-                return new ResponseDTO(Enums.StatusResponse.Failed, "Failed to Edit Book");
+                return new ResponseDTO(Enums.StatusResponse.Failed, e.getMessage());
             }
         }
         else return new BookResponseDTO(null,null,null,null,null,Enums.StatusResponse.Failed, "Book not found");
     }
 
+    @Transactional
     public ResponseDTO deleteBookById(Long id) {
         try {
-            IBooksRepository.deleteById(id);
-            return new ResponseDTO(Enums.StatusResponse.Success, "Book deleted Successfully");
+            Book existingBook = IBooksRepository.findById(id).orElse(null);
+            if (existingBook != null) {
+                IBooksRepository.deleteById(id);
+                return new ResponseDTO(Enums.StatusResponse.Success, "Book deleted Successfully");
+            }
+            return new ResponseDTO(Enums.StatusResponse.Failed, "Book Not Found");
+
         }catch (Exception e) {
             log.error("Failed to Delete Book: {}", e.getMessage(), e);
-            return new ResponseDTO(Enums.StatusResponse.Failed, "Failed to Delete Book");
+            return new ResponseDTO(Enums.StatusResponse.Failed, e.getMessage());
         }
     }
 }

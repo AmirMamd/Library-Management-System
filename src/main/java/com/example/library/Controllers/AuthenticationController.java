@@ -30,23 +30,22 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    private <T> ResponseEntity<T> createResponse(T response, Enums.StatusResponse status) {
+        return status == Enums.StatusResponse.Success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
+    }
+
+
     @PostMapping("/RegisterPatron")
     public ResponseEntity<LoginResponseDTO> registerPatron(@Valid @RequestBody RegisterDTO registerDTO)   {
         LoginResponseDTO response = authenticationService.registerPatron(registerDTO, PatronRoles());
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
     @PostMapping("/RegisterLibrarian")
     public ResponseEntity<LoginResponseDTO> registerLibrarian(@Valid @RequestBody RegisterDTO registerDTO) {
         LoginResponseDTO response = authenticationService.registerLibrarian(registerDTO, LibrarianRoles());
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
     @PostMapping("/Login")
@@ -59,15 +58,17 @@ public class AuthenticationController {
         }
     }
 
-
-    private static List<RolesDTO> PatronRoles(){
-        List<String> roleNames = Arrays.asList(ApplicationRoles.Borrow_Book, ApplicationRoles.Return_Book, ApplicationRoles.View_Books);
-        return RolesMapper.mapRoleNamesToDTO(roleNames);
+    public List<RolesDTO> PatronRoles() {
+        return RolesMapper.mapRoleNamesToDTO(
+                Arrays.asList(ApplicationRoles.Borrow_Book, ApplicationRoles.Return_Book, ApplicationRoles.View_Books)
+        );
     }
 
-    private static List<RolesDTO> LibrarianRoles(){
-        List<String> roleNames = Arrays.asList(ApplicationRoles.View_Patrons, ApplicationRoles.View_Books, ApplicationRoles.Return_Book, ApplicationRoles.Borrow_Book, ApplicationRoles.Edit_Books, ApplicationRoles.Edit_Patrons, ApplicationRoles.Delete_Books, ApplicationRoles.Delete_Patrons, ApplicationRoles.Add_Books, ApplicationRoles.Add_Patrons);
-        return RolesMapper.mapRoleNamesToDTO(roleNames);
+    public List<RolesDTO> LibrarianRoles() {
+        return RolesMapper.mapRoleNamesToDTO(
+                Arrays.asList(ApplicationRoles.View_Patrons, ApplicationRoles.View_Books, ApplicationRoles.Return_Book, ApplicationRoles.Borrow_Book, ApplicationRoles.Edit_Books, ApplicationRoles.Edit_Patrons, ApplicationRoles.Delete_Books, ApplicationRoles.Delete_Patrons, ApplicationRoles.Add_Books, ApplicationRoles.Add_Patrons)
+        );
     }
+
 
 }

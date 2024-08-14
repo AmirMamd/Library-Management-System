@@ -23,59 +23,49 @@ public class BooksController {
         this.booksService = booksService;
     }
 
+    private <T> ResponseEntity<T> createResponse(T response, Enums.StatusResponse status) {
+        return status == Enums.StatusResponse.Success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
+    }
+
     @GetMapping("")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).View_Books)")
     public ResponseEntity<AllBooksResponseDTO> getAllBooks()   {
         AllBooksResponseDTO response = booksService.getAllBooks();
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
     @PostMapping("")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Add_Books)")
     public ResponseEntity<ResponseDTO> addBook(@RequestBody BookDTO bookDTO)   {
         ResponseDTO response = booksService.addBook(bookDTO);
+        return createResponse(response, response.getStatusResponse());
 
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
     }
+
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).View_Books)")
-    public ResponseEntity<ResponseDTO> getBookById(@PathVariable Long id)   {
-        BookResponseDTO response = booksService.getBookById(id);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+    public ResponseEntity<BookResponseDTO> getBookById(@PathVariable Long id) {
+        return booksService.getBookById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().body(new BookResponseDTO(null, null, null, null, null, Enums.StatusResponse.Failed, "Book not found")));
     }
+
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Edit_Books)")
     public ResponseEntity<ResponseDTO> editBookById(@PathVariable Long id, @RequestBody BookDTO bookResponseDTO)   {
         ResponseDTO response = booksService.editBookById(id, bookResponseDTO);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Delete_Books)")
     public ResponseEntity<ResponseDTO> deleteBookById(@PathVariable Long id)   {
         ResponseDTO response = booksService.deleteBookById(id);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 }

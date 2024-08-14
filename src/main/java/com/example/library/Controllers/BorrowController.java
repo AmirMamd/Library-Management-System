@@ -24,25 +24,24 @@ public class BorrowController {
         this.borrowService = borrowService;
     }
 
+    private <T> ResponseEntity<T> createResponse(T response, Enums.StatusResponse status) {
+        return status == Enums.StatusResponse.Success ? ResponseEntity.ok(response) : ResponseEntity.badRequest().body(response);
+    }
+
+
     @PostMapping("borrow/{bookId}/patron/{patronId}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Borrow_Book)")
     public ResponseEntity<BorrowAndReturnResponseDTO> borrowBook(@PathVariable Long bookId, @PathVariable Long patronId, @RequestBody BorrowingRecordDTO borrowingRecordDTO) {
         BorrowAndReturnResponseDTO response = borrowService.borrowBook(bookId, patronId, borrowingRecordDTO);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 
     @PutMapping("return/{bookId}/patron/{patronId}")
     @PreAuthorize("hasRole(T(com.example.library.Common.ApplicationRoles).Return_Book)")
     public ResponseEntity<BorrowAndReturnResponseDTO> returnBook(@PathVariable Long bookId, @PathVariable Long patronId, @RequestBody ReturningRecordDTO returningRecordDTO) {
         BorrowAndReturnResponseDTO response = borrowService.returnBook(bookId, patronId, returningRecordDTO);
-        if (response.getStatusResponse() == Enums.StatusResponse.Success) {
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.badRequest().body(response);
-        }
+        return createResponse(response, response.getStatusResponse());
+
     }
 }

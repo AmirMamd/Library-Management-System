@@ -48,7 +48,7 @@ public class BorrowService {
 
                 } catch (Exception e) {
                     log.error("Failed To Borrow Book: {}", e.getMessage(), e);
-                    return new BorrowAndReturnResponseDTO(null, null, null, null, null,null, Enums.StatusResponse.Failed, "Failed To Borrow Book");
+                    return new BorrowAndReturnResponseDTO(null, null, null, null, null,null, Enums.StatusResponse.Failed, e.getMessage());
                 }
             }
             else {
@@ -73,11 +73,11 @@ public class BorrowService {
                         return new BorrowAndReturnResponseDTO(bookId,patronId,book.getTitle(),book.getAuthor(),book.getPublicationYear(),book.getISBN(),Enums.StatusResponse.Success, "Book Returned Successfully");
 
                     }
-                    return new BorrowAndReturnResponseDTO(null, null, null, null, null, null,Enums.StatusResponse.Failed, "Borrowing Record Doesn't Exist Or Book Is Already Returned");
+                    return new BorrowAndReturnResponseDTO(null, null, null, null, null, null,Enums.StatusResponse.Failed, "Borrowing Record Doesn't Exist for this patron Or Book Is Already Returned");
 
                 } catch (Exception e) {
                     log.error("Failed To Return Book: {}", e.getMessage(), e);
-                    return new BorrowAndReturnResponseDTO(null, null, null, null, null,null, Enums.StatusResponse.Failed, "Failed To Return Book");
+                    return new BorrowAndReturnResponseDTO(null, null, null, null, null,null, Enums.StatusResponse.Failed, e.getMessage());
                 }
             }
             else {
