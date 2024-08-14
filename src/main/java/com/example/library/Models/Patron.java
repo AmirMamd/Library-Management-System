@@ -31,30 +31,30 @@ public class Patron {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "FullName is Required")
     private String fullName;
 
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "Address is Required")
     private String address;
 
     @Column(unique = true)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "Email is Required")
     private String email;
 
     @Column(unique = true)
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "Username is Required")
     private String username;
 
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$", message = "Weak Password")
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "Password is Required")
     private String password;
 
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "PhoneNumber is Required")
     @Pattern(regexp = "^\\+[0-9]+$", message = "Phone Number is not valid")
     private String phoneNumber;
 
-    @NotBlank(message = "This Field is Required")
+    @NotBlank(message = "Country is Required")
     private String country;
 
     private boolean admin;
