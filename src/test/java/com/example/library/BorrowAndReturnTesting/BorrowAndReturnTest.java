@@ -1,4 +1,4 @@
-package com.example.library.BorrowAndReturnTests;
+package com.example.library.BorrowAndReturnTesting;
 
 import com.example.library.Common.ApplicationRoles;
 import com.example.library.Common.Enums;

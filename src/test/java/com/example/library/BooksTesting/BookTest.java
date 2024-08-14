@@ -1,4 +1,4 @@
-package com.example.library.BooksTests;
+package com.example.library.BooksTesting;
 
 import com.example.library.Common.ApplicationRoles;
 import com.example.library.Common.Enums;

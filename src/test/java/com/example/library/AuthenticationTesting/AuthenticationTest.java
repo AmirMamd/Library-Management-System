@@ -1,4 +1,4 @@
-package com.example.library.AuthenticationTests;
+package com.example.library.AuthenticationTesting;
 
 import com.example.library.Common.ApplicationRoles;
 import com.example.library.Common.Enums;
@@ -63,17 +63,17 @@ public class AuthenticationTest {
     @WithMockUser
     public void registerPatron_ShouldReturnSuccessResponse() throws Exception {
         RegisterDTO registerDTO = new RegisterDTO("testUser", "test@example.com", "test","password123", "+123456789", "Country", "Address");
-        LoginResponseDTO responseDTO = new LoginResponseDTO("token", 1L, Enums.StatusResponse.Success, "User registered successfully");
+        LoginResponseDTO responseDTO = new LoginResponseDTO("token", 1L, Enums.StatusResponse.Success, "Patron registered successfully");
 
         when(authenticationService.registerPatron(any(RegisterDTO.class), anyList())).thenReturn(responseDTO);
 
-        mockMvc.perform(post("/api/Authentication/RegisterUser")
+        mockMvc.perform(post("/api/Authentication/RegisterPatron")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registerDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.statusResponse").value(Enums.StatusResponse.Success.toString()))
                 .andExpect(jsonPath("$.accessToken").value("token"))
-                .andExpect(jsonPath("$.message").value("User registered successfully"))
+                .andExpect(jsonPath("$.message").value("Patron registered successfully"))
                 .andExpect(jsonPath("$.id").value(1L));
     }
 
@@ -118,7 +118,7 @@ public class AuthenticationTest {
 
         when(authenticationService.registerPatron(any(RegisterDTO.class), anyList())).thenReturn(responseDTO);
 
-        mockMvc.perform(post("/api/Authentication/RegisterUser")
+        mockMvc.perform(post("/api/Authentication/RegisterPatron")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registerDTO)))
                 .andExpect(status().isBadRequest())
